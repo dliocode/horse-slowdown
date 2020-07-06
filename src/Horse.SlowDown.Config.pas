@@ -41,7 +41,7 @@ implementation
 
 constructor TSlowDownManager.Create();
 begin
-  FDictionary:= TMemoryDictionary<TSlowDownConfig>.Create;
+  FDictionary := TMemoryDictionary<TSlowDownConfig>.Create;
 end;
 
 destructor TSlowDownManager.Destroy;
@@ -53,10 +53,10 @@ class function TSlowDownManager.New(const AConfig: TSlowDownConfig): TSlowDownMa
 var
   LConfig: TSlowDownConfig;
 begin
-  if not(Assigned(FInstance))then
+  if not(Assigned(FInstance)) then
     FInstance := TSlowDownManager.Create();
 
-  if not(FInstance.GetDictionary.TryGetValue(AConfig.Id, LConfig))then
+  if not(FInstance.GetDictionary.TryGetValue(AConfig.Id, LConfig)) then
   begin
     FInstance.GetDictionary.Add(AConfig.Id, AConfig);
     LConfig := AConfig;
@@ -71,17 +71,17 @@ class function TSlowDownManager.New(const AId: String; const ADelayAfter, ADelay
 var
   LConfig: TSlowDownConfig;
 begin
-  if not(Assigned(FInstance))then
+  if not(Assigned(FInstance)) then
     FInstance := TSlowDownManager.Create();
 
-  if not(FInstance.GetDictionary.TryGetValue(AId, LConfig))then
+  if not(FInstance.GetDictionary.TryGetValue(AId, LConfig)) then
   begin
-    LConfig.Id         := AId;
+    LConfig.Id := AId;
     LConfig.DelayAfter := ADelayAfter;
-    LConfig.DelayMs    := ADelayMs;
+    LConfig.DelayMs := ADelayMs;
     LConfig.MaxDelayMs := 0;
-    LConfig.Timeout    := ATimeout;
-    LConfig.Store      := nil;
+    LConfig.Timeout := ATimeout;
+    LConfig.Store := nil;
 
     FInstance.GetDictionary.Add(AId, LConfig);
   end;
@@ -94,7 +94,7 @@ end;
 procedure TSlowDownManager.Save;
 begin
   GetDictionary.Remove(Config.Id);
-  GetDictionary.Add(Config.Id,Config);
+  GetDictionary.Add(Config.Id, Config);
 end;
 
 class procedure TSlowDownManager.FinalizeInstance;

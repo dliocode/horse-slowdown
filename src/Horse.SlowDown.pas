@@ -10,8 +10,8 @@ uses
 
 const
   DEFAULT_DELAYAFTER = 60;
-  DEFAULT_DELAYMS = 1000;
-  DEFAULT_TIMEOUT = 60;
+  DEFAULT_DELAYMS    = 1000;
+  DEFAULT_TIMEOUT    = 60;
 
 type
   TSlowDownConfig = Horse.SlowDown.Config.TSlowDownConfig;
@@ -59,12 +59,12 @@ class function THorseSlowDown.New(const AConfig: TSlowDownConfig): THorseSlowDow
 var
   LConfig: TSlowDownConfig;
 begin
-  if not(Assigned(FInstance))then
+  if not(Assigned(FInstance)) then
     FInstance := THorseSlowDown.Create(AConfig)
   else
     FInstance.Manager := TSlowDownManager.New(AConfig);
 
-  if not(Assigned(FInstance.Manager.Config.Store))then
+  if not(Assigned(FInstance.Manager.Config.Store)) then
   begin
     LConfig := FInstance.Manager.Config;
     LConfig.Store := TMemoryStore.Create(FInstance.Manager.Config.Timeout);
@@ -78,12 +78,12 @@ class function THorseSlowDown.New(const AId: string; const ADelayAfter: Integer 
 var
   LConfig: TSlowDownConfig;
 begin
-  if not(Assigned(FInstance))then
+  if not(Assigned(FInstance)) then
     FInstance := THorseSlowDown.Create(AId, ADelayAfter, ADelayMs, ATimeout)
   else
     FInstance.Manager := TSlowDownManager.New(AId, ADelayAfter, ADelayMs, ATimeout);
 
-  if not(Assigned(FInstance.Manager.Config.Store))then
+  if not(Assigned(FInstance.Manager.Config.Store)) then
   begin
     LConfig := FInstance.Manager.Config;
     LConfig.Store := TMemoryStore.Create(FInstance.Manager.Config.Timeout);
@@ -115,16 +115,16 @@ var
   LKey: string;
   LTimeSleep: Int64;
 begin
-  LKey := 'SD'+Manager.Config.Id+ClientIP(Req);
+  LKey := 'SD' + Manager.Config.Id + ClientIP(Req);
 
-  LStoreCallback:= Manager.Config.Store.Incr(LKey);
+  LStoreCallback := Manager.Config.Store.Incr(LKey);
 
-  if(LStoreCallback.Current > Manager.Config.DelayAfter)then
+  if (LStoreCallback.Current > Manager.Config.DelayAfter) then
   begin
     LTimeSleep := Manager.Config.DelayMs * (LStoreCallback.Current - Manager.Config.DelayAfter);
 
-    if(Manager.Config.MaxDelayMs > 0)then
-      if(LTimeSleep > Manager.Config.MaxDelayMs)then
+    if (Manager.Config.MaxDelayMs > 0) then
+      if (LTimeSleep > Manager.Config.MaxDelayMs) then
         LTimeSleep := Manager.Config.MaxDelayMs;
 
     Sleep(LTimeSleep);
