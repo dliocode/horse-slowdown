@@ -10,8 +10,8 @@ uses
 
 const
   DEFAULT_DELAYAFTER = 60;
-  DEFAULT_DELAYMS    = 1000;
-  DEFAULT_TIMEOUT    = 60;
+  DEFAULT_DELAYMS = 1000;
+  DEFAULT_TIMEOUT = 60;
 
 type
   TSlowDownConfig = Horse.SlowDown.Config.TSlowDownConfig;
