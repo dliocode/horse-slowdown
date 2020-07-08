@@ -3,7 +3,7 @@ unit Horse.SlowDown.Config;
 interface
 
 uses
-  Horse.SlowDown.Store.Intf, Horse.SlowDown.Memory,
+  Store.Intf, Store.Lib.Memory,
   System.SysUtils;
 
 type
@@ -13,7 +13,7 @@ type
     DelayMs: Integer;
     MaxDelayMs: Integer;
     Timeout: Integer;
-    Store: ISlowDownStore;
+    Store: IStore;
   end;
 
   TSlowDownManager = class
@@ -31,7 +31,7 @@ type
     property Config: TSlowDownConfig read FConfig write FConfig;
 
     class function New(const AConfig: TSlowDownConfig): TSlowDownManager; overload;
-    class function New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer): TSlowDownManager; overload;
+    class function New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore): TSlowDownManager; overload;
     class procedure FinalizeInstance;
   end;
 
@@ -67,7 +67,7 @@ begin
   Result := FInstance;
 end;
 
-class function TSlowDownManager.New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer): TSlowDownManager;
+class function TSlowDownManager.New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore): TSlowDownManager;
 var
   LConfig: TSlowDownConfig;
 begin
@@ -81,7 +81,7 @@ begin
     LConfig.DelayMs := ADelayMs;
     LConfig.MaxDelayMs := 0;
     LConfig.Timeout := ATimeout;
-    LConfig.Store := nil;
+    LConfig.Store := AStore;
 
     FInstance.GetDictionary.Add(AId, LConfig);
   end;

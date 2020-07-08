@@ -4,7 +4,8 @@ interface
 
 uses
   Horse,
-  Horse.SlowDown.Config, Horse.SlowDown.Store.Intf, Horse.SlowDown.Store.Memory, Horse.SlowDown.Utils,
+  Horse.SlowDown.Config, Horse.SlowDown.Utils,
+  Store.Intf, Store.Memory,
   System.SysUtils, System.Math,
   Web.HTTPApp;
 
@@ -22,15 +23,15 @@ type
     class var FInstance: THorseSlowDown;
   public
     constructor Create(const AConfig: TSlowDownConfig); overload;
-    constructor Create(const AId: string; const ADelayAfter, ADelayMs, ATimeout: Integer); overload;
+    constructor Create(const AId: string; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore); overload;
     destructor Destroy; override;
     procedure Limit(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 
     property Manager: TSlowDownManager read FConfig write FConfig;
 
     class function New(const AConfig: TSlowDownConfig): THorseSlowDown; overload;
-    class function New(const AId: string; const ADelayAfter: Integer = DEFAULT_DELAYAFTER; const ADelayMs: Integer = DEFAULT_DELAYMS; const ATimeout: Integer = DEFAULT_TIMEOUT): THorseSlowDown; overload;
-    class function New(const ADelayAfter, ADelayMs, ATimeout: Integer): THorseSlowDown; overload;
+    class function New(const AId: string; const ADelayAfter: Integer = DEFAULT_DELAYAFTER; const ADelayMs: Integer = DEFAULT_DELAYMS; const ATimeout: Integer = DEFAULT_TIMEOUT; const AStore: IStore = nil): THorseSlowDown; overload;
+    class function New(const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore = nil): THorseSlowDown; overload;
     class function New(): THorseSlowDown; overload;
     class procedure FinalizeInstance;
   end;
@@ -44,9 +45,9 @@ begin
   FConfig := TSlowDownManager.New(AConfig);
 end;
 
-constructor THorseSlowDown.Create(const AId: string; const ADelayAfter, ADelayMs, ATimeout: Integer);
+constructor THorseSlowDown.Create(const AId: string; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore);
 begin
-  FConfig := TSlowDownManager.New(AId, ADelayAfter, ADelayMs, ATimeout);
+  FConfig := TSlowDownManager.New(AId, ADelayAfter, ADelayMs, ATimeout, AStore);
 end;
 
 destructor THorseSlowDown.Destroy;
@@ -67,35 +68,39 @@ begin
   if not(Assigned(FInstance.Manager.Config.Store)) then
   begin
     LConfig := FInstance.Manager.Config;
-    LConfig.Store := TMemoryStore.Create(FInstance.Manager.Config.Timeout);
+    LConfig.Store := TMemoryStore.New();
     FInstance.Manager.Config := LConfig;
   end;
+
+  FInstance.Manager.Config.Store.SetTimeout(FInstance.Manager.Config.Timeout);
 
   Result := FInstance;
 end;
 
-class function THorseSlowDown.New(const AId: string; const ADelayAfter: Integer = DEFAULT_DELAYAFTER; const ADelayMs: Integer = DEFAULT_DELAYMS; const ATimeout: Integer = DEFAULT_TIMEOUT): THorseSlowDown;
+class function THorseSlowDown.New(const AId: string; const ADelayAfter: Integer = DEFAULT_DELAYAFTER; const ADelayMs: Integer = DEFAULT_DELAYMS; const ATimeout: Integer = DEFAULT_TIMEOUT; const AStore: IStore = nil): THorseSlowDown;
 var
   LConfig: TSlowDownConfig;
 begin
   if not(Assigned(FInstance)) then
-    FInstance := THorseSlowDown.Create(AId, ADelayAfter, ADelayMs, ATimeout)
+    FInstance := THorseSlowDown.Create(AId, ADelayAfter, ADelayMs, ATimeout, AStore)
   else
-    FInstance.Manager := TSlowDownManager.New(AId, ADelayAfter, ADelayMs, ATimeout);
+    FInstance.Manager := TSlowDownManager.New(AId, ADelayAfter, ADelayMs, ATimeout, AStore);
 
   if not(Assigned(FInstance.Manager.Config.Store)) then
   begin
     LConfig := FInstance.Manager.Config;
-    LConfig.Store := TMemoryStore.Create(FInstance.Manager.Config.Timeout);
+    LConfig.Store := TMemoryStore.New();
     FInstance.Manager.Config := LConfig;
   end;
+
+  FInstance.Manager.Config.Store.SetTimeout(FInstance.Manager.Config.Timeout);
 
   Result := FInstance;
 end;
 
-class function THorseSlowDown.New(const ADelayAfter, ADelayMs, ATimeout: Integer): THorseSlowDown;
+class function THorseSlowDown.New(const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore = nil): THorseSlowDown;
 begin
-  Result := New('', ADelayAfter, ADelayMs, ATimeout);
+  Result := New('', ADelayAfter, ADelayMs, ATimeout, AStore);
 end;
 
 class function THorseSlowDown.New(): THorseSlowDown;
@@ -111,11 +116,11 @@ end;
 
 procedure THorseSlowDown.Limit(Req: THorseRequest; Res: THorseResponse; Next: TProc);
 var
-  LStoreCallback: TSlowDownStoreCallback;
+  LStoreCallback: TStoreCallback;
   LKey: string;
   LTimeSleep: Int64;
 begin
-  LKey := 'SD' + Manager.Config.Id + ClientIP(Req);
+  LKey := 'SD:' + Manager.Config.Id +':'+ ClientIP(Req);
 
   LStoreCallback := Manager.Config.Store.Incr(LKey);
 
