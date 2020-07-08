@@ -154,20 +154,20 @@ To use it you must add to uses `Store.Redis` with the function `TRedisStore.New(
 Ex: _Store Redis_
 ```delphi
 uses Horse, Horse.SlowDown, Store.Redis;
-  
+
 var
   App: THorse;
 begin
   App := THorse.Create(9000);
 
-  App.Use(THorseSlowDown.New(10, 60, TRedisStore.New()).Limit);
+  App.Use(THorseSlowDown.New(10, 500, 60, TRedisStore.New()).Limit);
 
-  App.Get('/ping',    
+  App.Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
     end);
-    
+
   App.Start;
 end.
 ```
