@@ -23,7 +23,7 @@ var
 begin
   App := THorse.Create(9000);
 
-  App.Use(THorseSlowDown.New().Limit)
+  App.Use(THorseSlowDown.New().Limit);
 
   App.Get('/ping',    
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
