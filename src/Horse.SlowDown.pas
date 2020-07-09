@@ -120,7 +120,7 @@ var
   LKey: string;
   LTimeSleep: Int64;
 begin
-  LKey := 'SD:' + Manager.Config.Id +':'+ ClientIP(Req);
+  LKey := 'SD:' + Manager.Config.Id + ':' + ClientIP(Req);
 
   LStoreCallback := Manager.Config.Store.Incr(LKey);
 
