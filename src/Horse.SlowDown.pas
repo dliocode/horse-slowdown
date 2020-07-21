@@ -139,7 +139,7 @@ begin
     Next;
   except
     Manager.Config.Store.Decrement(LKey);
-    Exit;
+    raise;
   end;
 
   Manager.Save;
