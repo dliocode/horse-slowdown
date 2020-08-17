@@ -137,12 +137,9 @@ begin
 
   try
     Next;
-  except
-    Manager.Config.Store.Decrement(LKey);
-    raise;
+  finally
+    Manager.Save;
   end;
-
-  Manager.Save;
 end;
 
 initialization
