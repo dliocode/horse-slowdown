@@ -23,21 +23,17 @@ Ex: _Store Memory_
 
 ```delphi
 uses Horse, Horse.SlowDown;
-  
-var
-  App: THorse;
+
 begin
-  App := THorse.Create(9000);
-
-  App.Use(THorseSlowDown.New().Limit);
-
-  App.Get('/ping',    
+  THorse
+  .Use(THorseSlowDown.New().Limit)
+  .Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
     end);
-    
-  App.Start;
+
+  THorse.Listen(9000);
 end.
 ```
 
@@ -46,31 +42,27 @@ Create multiple instances to different routes:
 
 ```delphi
 uses Horse, Horse.SlowDown;
-  
-var
-  App: THorse;
-begin
-  App := THorse.Create(9000);
 
-  App.Get('/ping', THorseSlowDown.New('ping').limit,
+begin
+  THorse.Get('/ping', THorseSlowDown.New('ping').limit,
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
-    end);
+    end)
 
-  App.Get('/book', THorseSlowDown.New('book').limit, 
+  .Get('/book', THorseSlowDown.New('book').limit,
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('The book!');
-    end);
+    end)
 
-  App.Get('/login', THorseSlowDown.New('login',10,500,60).limit,
+  .Get('/login', THorseSlowDown.New('login',10,500,60).limit,
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('My Login with Request Max of 10 every 60 seconds!');
-    end);    
+    end);
 
-  App.Start;
+  THorse.Listen(9000);
 end.
 ```
 
@@ -78,13 +70,10 @@ Settings use:
 
 ```delphi
 uses Horse, Horse.SlowDown;
-  
+
 var
-  App: THorse;
   Config: TSlowDownConfig;
 begin
-  App := THorse.Create(9000);
-
   Config.Id := 'ping';        // Identification
   Config.DelayAfter := 10;    // Delay after 60 Request
   Config.DelayMs := 500;      // Timeout of Delay
@@ -92,13 +81,14 @@ begin
   Config.Timeout := 60;       // Timeout in seconds to Reset
   Config.Store := nil;        // Default TMemoryStore
 
-  App.Get('/ping', THorseSlowDown.New(Config).limit,
+  THorse
+  .Get('/ping', THorseSlowDown.New(Config).limit,
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
     end);
 
-  App.Start;
+  THorse.Listen(9000);
 end.
 ```
 
@@ -159,20 +149,16 @@ Ex: _Store Redis_
 ```delphi
 uses Horse, Horse.SlowDown, Store.Redis;
 
-var
-  App: THorse;
 begin
-  App := THorse.Create(9000);
-
-  App.Use(THorseSlowDown.New(10, 500, 60, TRedisStore.New()).Limit);
-
-  App.Get('/ping',
+  THorse
+  .Use(THorseSlowDown.New(10, 500, 60, TRedisStore.New()).Limit)
+  .Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
     end);
 
-  App.Start;
+  THorse.Listen(9000);
 end.
 ```
 
