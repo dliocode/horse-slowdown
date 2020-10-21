@@ -4,16 +4,16 @@
 	"installedModules": {
 		"github.com/dliocode/horse-slowdown": {
 			"name": "horse-slowdown",
-			"version": "1.0.1",
-			"hash": "b004f303da713e9dcdf32839c09edbac",
+			"version": "1.2.0",
+			"hash": "c1a7c8b177ca5d288936466a177c7e39",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
 		},
 		"github.com/hashload/horse": {
 			"name": "horse",
-			"version": "1.7.7",
-			"hash": "b0bce44e36b320a8ca6bc864f137cb9d",
+			"version": "v2.0.2",
+			"hash": "5c32de1d8aae94b0c88c40158dc01739",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
@@ -28,8 +28,8 @@
 		},
 		"https://github.com/dliocode/store": {
 			"name": "store",
-			"version": "1.0.0",
-			"hash": "9b7aae2642ea3abd7458ce64506400d7",
+			"version": "1.0.1",
+			"hash": "a4d89132d5824212de1abce4fa676be4",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
