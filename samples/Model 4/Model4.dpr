@@ -4,7 +4,7 @@ uses Horse, Horse.SlowDown, Store.Redis;
 
 begin
   THorse
-  .Use(THorseSlowDown.New(10, 500, 60, TRedisStore.New()).Limit)
+  .Use(THorseSlowDown.New('ping', 10, 500, 60, TRedisStore.New()))
   .Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin

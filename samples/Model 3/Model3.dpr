@@ -13,7 +13,7 @@ begin
   Config.Store := nil;        // Default TMemoryStore
 
   THorse
-  .Get('/ping', THorseSlowDown.New(Config).limit,
+  .Get('/ping', THorseSlowDown.New(Config),
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
