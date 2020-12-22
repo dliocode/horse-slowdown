@@ -1,5 +1,5 @@
 unit Horse.SlowDown;
-
+
 interface
 
 uses
@@ -34,7 +34,12 @@ var
   FManagerConfig: TSlowDownManager;
   LConfig: TSlowDownConfig;
 begin
-  FManagerConfig := TSlowDownManager.New(AConfig);
+  CriticalSection.Enter;
+  try
+    FManagerConfig := TSlowDownManager.New(AConfig);
+  finally
+    CriticalSection.Leave;
+  end;
 
   if not(Assigned(FManagerConfig.Config.Store)) then
   begin
@@ -106,4 +111,3 @@ finalization
 FreeAndNil(THorseSlowDown.CriticalSection);
 
 end.
-
