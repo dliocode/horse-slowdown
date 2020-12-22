@@ -1,10 +1,10 @@
 unit Horse.SlowDown.Config;
-
+
 interface
 
 uses
   Store.Intf, Store.Lib.Memory,
-  System.SysUtils;
+  System.SysUtils, System.SyncObjs;
 
 type
   TSlowDownConfig = record
@@ -17,10 +17,14 @@ type
   end;
 
   TSlowDownManager = class
-  strict private
+  private
     FDictionary: TMemoryDictionary<TSlowDownConfig>;
     FConfig: TSlowDownConfig;
+
+    procedure SetConfig(const AConfig: TSlowDownConfig);
+
     class var FInstance: TSlowDownManager;
+    class var CriticalSection: TCriticalSection;
   public
     constructor Create();
     destructor Destroy; override;
@@ -30,9 +34,8 @@ type
 
     property Config: TSlowDownConfig read FConfig write FConfig;
 
-    class function New(const AConfig: TSlowDownConfig): TSlowDownManager; overload;
-    class function New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore): TSlowDownManager; overload;
-    class procedure FinalizeInstance;
+    class function New(const AConfig: TSlowDownConfig): TSlowDownManager;
+    class destructor UnInitialize;
   end;
 
 implementation
@@ -41,66 +44,41 @@ implementation
 
 constructor TSlowDownManager.Create();
 begin
+  if Assigned(FInstance) then
+    raise Exception.Create('The SlowDownManager instance has already been created!');
+
   FDictionary := TMemoryDictionary<TSlowDownConfig>.Create;
 end;
 
 destructor TSlowDownManager.Destroy;
 begin
-  FDictionary.Free;
+  FreeAndNil(FDictionary);
 end;
 
 class function TSlowDownManager.New(const AConfig: TSlowDownConfig): TSlowDownManager;
-var
-  LConfig: TSlowDownConfig;
 begin
   if not(Assigned(FInstance)) then
     FInstance := TSlowDownManager.Create();
 
-  if not(FInstance.GetDictionary.TryGetValue(AConfig.Id, LConfig)) then
-  begin
-    FInstance.GetDictionary.Add(AConfig.Id, AConfig);
-    LConfig := AConfig;
-  end;
-
-  FInstance.Config := LConfig;
+  FInstance.SetConfig(AConfig);
 
   Result := FInstance;
 end;
 
-class function TSlowDownManager.New(const AId: String; const ADelayAfter, ADelayMs, ATimeout: Integer; const AStore: IStore): TSlowDownManager;
-var
-  LConfig: TSlowDownConfig;
+class destructor TSlowDownManager.UnInitialize;
 begin
-  if not(Assigned(FInstance)) then
-    FInstance := TSlowDownManager.Create();
-
-  if not(FInstance.GetDictionary.TryGetValue(AId, LConfig)) then
-  begin
-    LConfig.Id := AId;
-    LConfig.DelayAfter := ADelayAfter;
-    LConfig.DelayMs := ADelayMs;
-    LConfig.MaxDelayMs := 0;
-    LConfig.Timeout := ATimeout;
-    LConfig.Store := AStore;
-
-    FInstance.GetDictionary.Add(AId, LConfig);
-  end;
-
-  FInstance.Config := LConfig;
-
-  Result := FInstance;
+  if Assigned(FInstance) then
+    FreeAndNil(FInstance);
 end;
 
 procedure TSlowDownManager.Save;
 begin
-  GetDictionary.Remove(Config.Id);
-  GetDictionary.Add(Config.Id, Config);
-end;
-
-class procedure TSlowDownManager.FinalizeInstance;
-begin
-  if Assigned(FInstance) then
-    FInstance.Free;
+  CriticalSection.Enter;
+  try
+    FDictionary.AddOrSetValue(Config.Id, Config);
+  finally
+    CriticalSection.Leave;
+  end;
 end;
 
 function TSlowDownManager.GetDictionary: TMemoryDictionary<TSlowDownConfig>;
@@ -108,4 +86,31 @@ begin
   Result := FDictionary;
 end;
 
+procedure TSlowDownManager.SetConfig(const AConfig: TSlowDownConfig);
+var
+  LConfig: TSlowDownConfig;
+begin
+  CriticalSection.Enter;
+  try
+    if not(FDictionary.TryGetValue(AConfig.Id, LConfig)) then
+    begin
+      FDictionary.Add(AConfig.Id, AConfig);
+      LConfig := AConfig;
+    end;
+  finally
+    CriticalSection.Leave;
+  end;
+
+  FConfig := LConfig;
+end;
+
+initialization
+
+TSlowDownManager.CriticalSection := TCriticalSection.Create;
+
+finalization
+
+FreeAndNil(TSlowDownManager.CriticalSection);
+
 end.
+

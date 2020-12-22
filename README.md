@@ -26,7 +26,7 @@ uses Horse, Horse.SlowDown;
 
 begin
   THorse
-  .Use(THorseSlowDown.New().Limit)
+  .Use(THorseSlowDown.New())
   .Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
@@ -44,19 +44,19 @@ Create multiple instances to different routes:
 uses Horse, Horse.SlowDown;
 
 begin
-  THorse.Get('/ping', THorseSlowDown.New('ping').limit,
+  THorse.Get('/ping', THorseSlowDown.New('ping'),
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
     end)
 
-  .Get('/book', THorseSlowDown.New('book').limit,
+  .Get('/book', THorseSlowDown.New('book'),
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('The book!');
     end)
 
-  .Get('/login', THorseSlowDown.New('login',10,500,60).limit,
+  .Get('/login', THorseSlowDown.New('login',10,500,60),
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('My Login with Request Max of 10 every 60 seconds!');
@@ -82,7 +82,7 @@ begin
   Config.Store := nil;        // Default TMemoryStore
 
   THorse
-  .Get('/ping', THorseSlowDown.New(Config).limit,
+  .Get('/ping', THorseSlowDown.New(Config),
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
       Res.Send('pong');
@@ -151,7 +151,7 @@ uses Horse, Horse.SlowDown, Store.Redis;
 
 begin
   THorse
-  .Use(THorseSlowDown.New(10, 500, 60, TRedisStore.New()).Limit)
+  .Use(THorseSlowDown.New('ping', 10, 500, 60, TRedisStore.New())) // Add TRedisStore.New()
   .Get('/ping',
     procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     begin
