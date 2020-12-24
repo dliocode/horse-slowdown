@@ -20,8 +20,16 @@
 		},
 		"https://github.com/dliocode/horse-slowdown": {
 			"name": "horse-slowdown",
-			"version": "2.0.2",
-			"hash": "9aec96f844cb9327a1db34a18efbbbfc",
+			"version": "2.0.4",
+			"hash": "186894f7408606c58a51c93a7deb51e4",
+			"artifacts": {},
+			"failed": false,
+			"changed": false
+		},
+		"https://github.com/dliocode/horse-utils-clientip": {
+			"name": "horse-utils-clientip",
+			"version": "0.0.4",
+			"hash": "5802397a4d8b9819cd2c47a8ebe16135",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
