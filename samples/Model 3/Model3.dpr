@@ -1,6 +1,7 @@
 program Model3;
 
-uses Horse, Horse.SlowDown;
+uses
+  Horse, Horse.SlowDown;
 
 var
   Config: TSlowDownConfig;

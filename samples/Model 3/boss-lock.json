@@ -1,6 +1,6 @@
 {
 	"hash": "d41d8cd98f00b204e9800998ecf8427e",
-	"updated": "2020-12-22T18:19:53.9612338-03:00",
+	"updated": "2020-12-24T17:51:35.6790484-03:00",
 	"installedModules": {
 		"github.com/hashload/horse": {
 			"name": "horse",
@@ -20,24 +20,24 @@
 		},
 		"https://github.com/dliocode/horse-slowdown": {
 			"name": "horse-slowdown",
-			"version": "2.0.4",
-			"hash": "290ab20e5fc02adcbf2e641a6f1a664f",
+			"version": "2.0.5",
+			"hash": "1db31b14927e54ad221011bed9f68094",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
 		},
 		"https://github.com/dliocode/horse-utils-clientip": {
 			"name": "horse-utils-clientip",
-			"version": "0.0.4",
-			"hash": "5802397a4d8b9819cd2c47a8ebe16135",
+			"version": "0.0.5",
+			"hash": "e70e774b0e0e7248d1e9028fc9c4542e",
 			"artifacts": {},
 			"failed": false,
 			"changed": false
 		},
 		"https://github.com/dliocode/store": {
 			"name": "store",
-			"version": "2.0.1",
-			"hash": "ed6443c4fac6bb9f67215248b3a85f11",
+			"version": "2.0.2",
+			"hash": "e761bc2e0bf482271b9b8e9f8f133c35",
 			"artifacts": {},
 			"failed": false,
 			"changed": false

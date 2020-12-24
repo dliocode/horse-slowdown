@@ -1,6 +1,7 @@
 program Model1;
 
-uses Horse, Horse.SlowDown;
+uses
+  Horse, Horse.SlowDown;
 
 begin
   THorse

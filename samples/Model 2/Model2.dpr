@@ -1,6 +1,7 @@
 program Model2;
 
-uses Horse, Horse.SlowDown;
+uses
+  Horse, Horse.SlowDown;
 
 begin
   THorse.Get('/ping', THorseSlowDown.New('ping'),

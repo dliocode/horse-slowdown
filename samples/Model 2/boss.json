@@ -6,6 +6,6 @@
 	"mainsrc": "./",
 	"projects": [],
 	"dependencies": {
-		"https://github.com/dliocode/horse-slowdown": "^2.0.2"
+		"https://github.com/dliocode/horse-slowdown": "^2.0.5"
 	}
 }
