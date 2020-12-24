@@ -47,7 +47,7 @@
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <SanitizedProjectName>HorseSlowDown</SanitizedProjectName>
-        <DCC_UnitSearchPath>modules\.dcp;modules\.dcu;modules;modules\delphiredisclient\samples\02JobQueue;modules\delphiredisclient\samples\03PubSub;modules\delphiredisclient\samples\99FireMonkeySample;modules\delphiredisclient\samples\Commons;modules\delphiredisclient\sources;modules\delphiredisclient\tests;modules\horse\src;modules\horse-utils-clientip\src;modules\store\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\delphiredisclient\samples\02JobQueue;modules\delphiredisclient\samples\03PubSub;modules\delphiredisclient\samples\99FireMonkeySample;modules\delphiredisclient\samples\Commons;modules\delphiredisclient\sources;modules\delphiredisclient\tests;modules\horse\src;modules\horse-utils-clientip\src;modules\store\src</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>

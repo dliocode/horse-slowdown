@@ -3,9 +3,8 @@ unit Horse.SlowDown;
 interface
 
 uses
-  Horse,
-  Horse.SlowDown.Config, Horse.Utils.ClientIP,
-  Store.Intf, Store.Memory,
+  Horse, Horse.Utils.ClientIP,
+  Store.Intf, Store.Memory, Store.Config,
   System.SysUtils, System.Math, System.SyncObjs, System.Classes,
   Web.HTTPApp;
 
@@ -15,7 +14,14 @@ const
   DEFAULT_TIMEOUT = 60;
 
 type
-  TSlowDownConfig = Horse.SlowDown.Config.TSlowDownConfig;
+ TSlowDownConfig = record
+    Id: string;
+    DelayAfter: Integer;
+    DelayMs: Integer;
+    MaxDelayMs: Integer;
+    Timeout: Integer;
+    Store: IStore;
+  end;
 
   THorseSlowDown = class
   private
@@ -31,38 +37,37 @@ implementation
 
 class function THorseSlowDown.New(const AConfig: TSlowDownConfig): THorseCallback;
 var
-  FManagerConfig: TSlowDownManager;
+  LStoreConfig: TStoreConfig<TSlowDownConfig>;
   LConfig: TSlowDownConfig;
 begin
   CriticalSection.Enter;
   try
-    FManagerConfig := TSlowDownManager.New(AConfig);
+    LStoreConfig := TStoreConfig<TSlowDownConfig>.New(AConfig.Id, AConfig);
   finally
     CriticalSection.Leave;
   end;
 
-  if not(Assigned(FManagerConfig.Config.Store)) then
+  if not(Assigned(LStoreConfig.Config.Store)) then
   begin
-    LConfig := FManagerConfig.Config;
+    LConfig := LStoreConfig.Config;
     LConfig.Store := TMemoryStore.New();
 
-    FManagerConfig.Config := LConfig;
+    LStoreConfig.Config := LConfig;
   end;
 
-  FManagerConfig.Config.Store.SetTimeout(FManagerConfig.Config.Timeout);
-  
-  FManagerConfig.Save;
+  LStoreConfig.Config.Store.SetTimeout(LStoreConfig.Config.Timeout);
+  LStoreConfig.Save(LStoreConfig.Config.Id);
 
   Result := procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
     var
-      LManagerConfig: TSlowDownManager;
+      LManagerConfig: TStoreConfig<TSlowDownConfig>;
       LStoreCallback: TStoreCallback;
       LKey: string;
       LTimeSleep: Int64;
     begin
       CriticalSection.Enter;
       try
-        LManagerConfig := TSlowDownManager.New(AConfig);
+        LManagerConfig := TStoreConfig<TSlowDownConfig>.New(AConfig.Id, AConfig);
       finally
         CriticalSection.Leave;
       end;
@@ -85,7 +90,7 @@ begin
       try
         Next;
       finally
-        LManagerConfig.Save;
+        LManagerConfig.Save(LManagerConfig.Config.Id);
       end;
     end;
 end;
