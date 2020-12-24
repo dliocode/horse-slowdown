@@ -4,7 +4,7 @@ interface
 
 uses
   Horse,
-  Horse.SlowDown.Config, Horse.SlowDown.Utils,
+  Horse.SlowDown.Config, Horse.Utils.ClientIP,
   Store.Intf, Store.Memory,
   System.SysUtils, System.Math, System.SyncObjs, System.Classes,
   Web.HTTPApp;
